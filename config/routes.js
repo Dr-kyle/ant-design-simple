@@ -15,8 +15,22 @@ export default [
         ],
       },
       {
+        path: '/thirdLogin',
+        component: '../layouts/BlankLayout',
+        routes: [
+          {
+            name: 'callback',
+            path: '/thirdLogin/callback',
+            component: './user/login/components/ThirdLogin',
+          },
+        ],
+      },
+      {
         path: '/',
         component: '../layouts/SecurityLayout',
+        wrappers: [
+          '@/wrappers/auth'
+        ],
         routes: [
           {
             path: '/',

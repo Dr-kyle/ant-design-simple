@@ -11,6 +11,31 @@ async function getFakeCaptcha(req, res) {
   return res.json('captcha-xxx');
 } // 代码中会兼容本地 service mock 以及部署站点的静态数据
 
+const getThirdUrl = (req, res) => {
+  return res.json({
+    code: 200,
+    data: {
+      url: ''
+    }
+  });
+};
+
+const getServerToken = async (req, res) => {
+  console.log('getServerToken')
+  res.send({
+    code: 200,
+    data: {
+      token: 'testtesttesttoken',
+      username: "kyle.k.zhao",
+      uuid: "kz37",
+      avatar: "",
+      nickname: "kyle zhao",
+      authority: 'admin'
+    }
+  });
+  return;
+}
+
 export default {
   // 支持值为 Object 和 Array
   'GET /api/currentUser': {
@@ -164,4 +189,20 @@ export default {
     });
   },
   'GET  /api/login/captcha': getFakeCaptcha,
+  'GET /api/oauth/render/myauth': getThirdUrl,
+  'POST /api/oauth/callback/myauth': async (req, res) => {
+    await waitTime(2000);
+    res.send({
+      code: 200,
+      data: {
+        token: 'testtesttesttoken',
+        username: "kyle.k.zhao",
+        uuid: "kz37",
+        avatar: "",
+        nickname: "kyle zhao",
+        authority: 'admin'
+      }
+    });
+    return;
+  },
 };

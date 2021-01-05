@@ -1,8 +1,9 @@
 import { stringify } from 'querystring';
 import { history } from 'umi';
-import { fakeAccountLogin } from '@/services/login';
+import { fakeAccountLogin, getServerToken } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import { setToken } from '@/utils/cookies';
 import { message } from 'antd';
 
 const Model = {
@@ -42,7 +43,39 @@ const Model = {
         history.replace(redirect || '/');
       }
     },
+    *thirdLogin({ payload }, { call, put }) {
+      
+      const response = yield call(getServerToken, payload);
+      console.log('thirdLogin payload', payload)
+      console.log('thirdLogin response', response)
+      yield put({
+        type: 'changeThirdLoginStatus',
+        payload: response,
+      }); // Login successfully
 
+      if (response.code === '200') {
+        const urlParams = new URL(window.location.href);
+        const params = getPageQuery();
+        message.success('🎉 🎉 🎉  login success!');
+        let { redirect } = params;
+
+        if (redirect) {
+          const redirectUrlParams = new URL(redirect);
+
+          if (redirectUrlParams.origin === urlParams.origin) {
+            redirect = redirect.substr(urlParams.origin.length);
+
+            if (redirect.match(/^\/.*#/)) {
+              redirect = redirect.substr(redirect.indexOf('#') + 1);
+            }
+          } else {
+            window.location.href = '/';
+            return;
+          }
+        }
+        history.replace(redirect || '/');
+      }
+    },
     logout() {
       const { redirect } = getPageQuery(); // Note: There may be security issues, please note
 
@@ -60,6 +93,11 @@ const Model = {
     changeLoginStatus(state, { payload }) {
       setAuthority(payload.currentAuthority);
       return { ...state, status: payload.status, type: payload.type };
+    },
+    changeThirdLoginStatus(state, { payload }) {
+      setToken(payload.data.token)
+      setAuthority(payload.data.authority);
+      return { ...state, user: payload.data };
     },
   },
 };

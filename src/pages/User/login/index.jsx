@@ -11,7 +11,7 @@ import { Alert, Space, message, Tabs } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, connect, FormattedMessage } from 'umi';
-import { getFakeCaptcha } from '@/services/login';
+import { getFakeCaptcha, getThirdUrl } from '@/services/login';
 import styles from './index.less';
 
 const LoginMessage = ({ content }) => (
@@ -30,6 +30,12 @@ const Login = (props) => {
   const { status, type: loginType } = userLogin;
   const [type, setType] = useState('account');
   const intl = useIntl();
+
+  const thirdLogin = async (value) => {
+    console.log('user login index.jsx', value);
+    const res = await getThirdUrl(value);
+    window.location.href=res.data.url;
+  }
 
   const handleSubmit = (values) => {
     const { dispatch } = props;
@@ -60,7 +66,7 @@ const Login = (props) => {
           return Promise.resolve();
         }}
       >
-        <Tabs activeKey={type} onChange={setType}>
+        {/* <Tabs activeKey={type} onChange={setType}>
           <Tabs.TabPane
             key="account"
             tab={intl.formatMessage({
@@ -75,7 +81,7 @@ const Login = (props) => {
               defaultMessage: '手机号登录',
             })}
           />
-        </Tabs>
+        </Tabs> */}
 
         {status === 'error' && loginType === 'account' && !submitting && (
           <LoginMessage
@@ -238,9 +244,9 @@ const Login = (props) => {
       </ProForm>
       <Space className={styles.other}>
         <FormattedMessage id="pages.login.loginWith" defaultMessage="其他登录方式" />
-        <AlipayCircleOutlined className={styles.icon} />
-        <TaobaoCircleOutlined className={styles.icon} />
-        <WeiboCircleOutlined className={styles.icon} />
+        <AlipayCircleOutlined className={styles.icon} onClick={() => thirdLogin('myauth')}/>
+        <TaobaoCircleOutlined className={styles.icon} onClick={() => thirdLogin('myauth')}/>
+        <WeiboCircleOutlined className={styles.icon} onClick={() => thirdLogin('myauth')}/>
       </Space>
     </div>
   );
