@@ -17,6 +17,14 @@ export async function getThirdUrl(type = 'myauth') {
 
 export async function getServerToken(type = 'myauth', params) {
   return request(`/api/oauth/callback/myauth`, {
-    params
+    method: 'POST',
+    data: params,
   })
+}
+
+export async function accountLogin(params) {
+  return request('/api/account/login', {
+    method: 'POST',
+    data: params,
+  });
 }

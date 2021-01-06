@@ -25,12 +25,7 @@ const getServerToken = async (req, res) => {
   res.send({
     code: 200,
     data: {
-      token: 'testtesttesttoken',
-      username: "kyle.k.zhao",
-      uuid: "kz37",
-      avatar: "",
-      nickname: "kyle zhao",
-      authority: 'admin'
+      token: 'testtesttesttoken'
     }
   });
   return;
@@ -113,7 +108,7 @@ export default {
     const { password, userName, type } = req.body;
     await waitTime(2000);
 
-    if (password === 'ant.design' && userName === 'admin') {
+    if (password === 'admin' && userName === 'admin') {
       res.send({
         status: 'ok',
         type,
@@ -122,7 +117,7 @@ export default {
       return;
     }
 
-    if (password === 'ant.design' && userName === 'user') {
+    if (password === 'admin' && userName === 'user') {
       res.send({
         status: 'ok',
         type,
@@ -189,20 +184,60 @@ export default {
     });
   },
   'GET  /api/login/captcha': getFakeCaptcha,
+
   'GET /api/oauth/render/myauth': getThirdUrl,
   'POST /api/oauth/callback/myauth': async (req, res) => {
-    await waitTime(2000);
+    console.log('/api/oauth/callback/myauth', req.body)
+    // await waitTime(2000);
     res.send({
       code: 200,
       data: {
         token: 'testtesttesttoken',
-        username: "kyle.k.zhao",
-        uuid: "kz37",
-        avatar: "",
-        nickname: "kyle zhao",
         authority: 'admin'
       }
     });
-    return;
+  },
+  'GET /api/user' : {
+    code: 200,
+    data: {
+      "uuid": "heihei",
+      "username": "Kyle Zhao",
+      "nickname": "Kyle Zhao",
+      "avatar": "https://avatars1.githubusercontent.com/u/23629150?s=60&v=4",
+      "email": "test"
+    },
+    message: 'success'
+  },
+  'POST /api/account/login': async (req, res) => {
+    const { password, userName } = req.body;
+    await waitTime(2000);
+
+    if (password === 'admin' && userName === 'admin') {
+      res.send({
+        code: 200,
+        data: {
+          token: 'admin',
+          authority: 'admin'
+        }
+      });
+      return;
+    }
+
+    if (password === 'admin' && userName === 'user') {
+      res.send({
+        code: 200,
+        data: {
+          token: 'user',
+          authority: 'user'
+        }
+      });
+      return;
+    }
+    res.send({
+      code: 200,
+      data: {
+        authority: 'guest',
+      }
+    });
   },
 };

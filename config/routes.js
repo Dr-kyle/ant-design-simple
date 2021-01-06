@@ -28,9 +28,9 @@ export default [
       {
         path: '/',
         component: '../layouts/SecurityLayout',
-        wrappers: [
-          '@/wrappers/auth'
-        ],
+        // wrappers: [
+        //   '@/wrappers/auth'
+        // ],
         routes: [
           {
             path: '/',

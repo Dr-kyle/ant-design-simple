@@ -11,7 +11,7 @@ import { Alert, Space, message, Tabs } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, connect, FormattedMessage } from 'umi';
-import { getFakeCaptcha, getThirdUrl } from '@/services/login';
+import { getFakeCaptcha, getThirdUrl, getServerToken } from '@/services/login';
 import styles from './index.less';
 
 const LoginMessage = ({ content }) => (
@@ -37,11 +37,22 @@ const Login = (props) => {
     window.location.href=res.data.url;
   }
 
+  const thirdLogin1 = async () => {
+    const res = await getThirdUrl();
+    console.log('thirdLogin1', res)
+  }
+
+  const thirdLogin2 = async () => {
+    const res = await getServerToken();
+    console.log('thirdLogin2', res)
+  }
+
   const handleSubmit = (values) => {
     const { dispatch } = props;
     dispatch({
-      type: 'login/login',
-      payload: { ...values, type },
+      // type: 'login/login',
+      type: 'login/customLogin',
+      payload: { ...values },
     });
   };
 
@@ -245,8 +256,8 @@ const Login = (props) => {
       <Space className={styles.other}>
         <FormattedMessage id="pages.login.loginWith" defaultMessage="其他登录方式" />
         <AlipayCircleOutlined className={styles.icon} onClick={() => thirdLogin('myauth')}/>
-        <TaobaoCircleOutlined className={styles.icon} onClick={() => thirdLogin('myauth')}/>
-        <WeiboCircleOutlined className={styles.icon} onClick={() => thirdLogin('myauth')}/>
+        <TaobaoCircleOutlined className={styles.icon} onClick={() => thirdLogin1()}/>
+        <WeiboCircleOutlined className={styles.icon} onClick={() => thirdLogin2()}/>
       </Space>
     </div>
   );
@@ -254,5 +265,5 @@ const Login = (props) => {
 
 export default connect(({ login, loading }) => ({
   userLogin: login,
-  submitting: loading.effects['login/login'],
+  submitting: loading.effects['login/customLogin'],
 }))(Login);

@@ -46,14 +46,31 @@ const errorHandler = (error) => {
 
   return response;
 };
+
+const errorHandlerCustom = (error) => {
+  const { response } = error;
+  if (response && response.code) {
+    const errorText = response.message;
+    notification.error({
+      message: 'request error!',
+      description: errorText,
+    });
+  } else if (!response) {
+    notification.error({
+      description: 'can not connect server, please check network',
+      message: 'network anomaly ',
+    });
+  }
+  return response;
+};
 /**
  * 配置request请求时的默认参数
  */
 
 const request = extend({
-  errorHandler,
+  errorHandler: errorHandlerCustom,
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie,
-  headers: { 'Authorization': getToken() ? `Bearer ${getToken}` : null }
+  headers: { 'Authorization': getToken()}
 });
 export default request;
